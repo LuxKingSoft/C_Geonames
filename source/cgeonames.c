@@ -1,15 +1,15 @@
 /**
- * @file geonames.c
+ * @file cgeonames.c
  * @brief GeoNames engine — download, parse, fuzzy search.
  *
- * Full implementation of the geonames.h public API.
+ * Full implementation of the cgeonames.h public API.
  *
  * Dependencies:
  *   - libcurl  (network download)
  *   - system `unzip` command (archive extraction)
  *   - math library (-lm on Unix)
  */
-#include "geonames.h"
+#include "cgeonames.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -46,7 +46,7 @@
 #define GN_INITIAL_CAP 1024
 
 /** Default data directory name under the user's home folder. */
-#define GN_DEFAULT_DATA_DIR ".geonames"
+#define GN_DEFAULT_DATA_DIR ".cgeonames"
 
 /** cURL User-Agent header (GeoNames requests a valid agent). */
 #define GN_USER_AGENT "AstroNumerologyChart/1.0"
@@ -1020,7 +1020,7 @@ gn_engine_t* gn_engine_create(void) {
         return NULL;
     }
 
-    /* Default data directory: ~/.geonames/ */
+    /* Default data directory: ~/.cgeonames/ */
     const char* home = get_home_dir();
     snprintf(eng->data_dir, sizeof(eng->data_dir),
              "%s" GN_SEP "%s", home, GN_DEFAULT_DATA_DIR);
@@ -1883,8 +1883,8 @@ static char g_ver[32];
 
 const char* gn_version(void) {
     snprintf(g_ver, sizeof(g_ver), "%d.%d.%d",
-             GEONAMES_VERSION_MAJOR,
-             GEONAMES_VERSION_MINOR,
-             GEONAMES_VERSION_PATCH);
+             CGEONAMES_VERSION_MAJOR,
+             CGEONAMES_VERSION_MINOR,
+             CGEONAMES_VERSION_PATCH);
     return g_ver;
 }

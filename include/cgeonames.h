@@ -1,5 +1,5 @@
 /**
- * @file geonames.h
+ * @file cgeonames.h
  * @brief GeoNames offline city lookup with auto-download.
  *
  * Parses GeoNames TSV files (per-country, cities1000, allCountries, etc.)
@@ -46,9 +46,9 @@ extern "C" {
  *  Version
  * ======================================================================== */
 
-#define GEONAMES_VERSION_MAJOR 1
-#define GEONAMES_VERSION_MINOR 0
-#define GEONAMES_VERSION_PATCH 0
+#define CGEONAMES_VERSION_MAJOR 1
+#define CGEONAMES_VERSION_MINOR 0
+#define CGEONAMES_VERSION_PATCH 0
 
 /* ========================================================================
  *  Constants
@@ -397,7 +397,7 @@ typedef void (*gn_download_progress_t)(
  * The engine starts empty. Call gn_engine_download_and_load() or
  * gn_engine_load_file() to populate it with data.
  *
- * The default data directory is set to `~/.geonames/` and is used for
+ * The default data directory is set to `~/.cgeonames/` and is used for
  * caching downloaded files.
  */
 gn_engine_t* gn_engine_create(void);
@@ -498,7 +498,7 @@ int gn_engine_error_info(const gn_engine_t* engine, gn_error_info_t* out);
  * @param country_code    ISO 3166-1 alpha-2 code (required when
  *                        source == @c GN_SRC_COUNTRY, ignored otherwise).
  * @param local_dir       Directory for downloaded files.
- *                        NULL uses the engine's default (`~/.geonames/`).
+ *                        NULL uses the engine's default (`~/.cgeonames/`).
  * @param progress_cb     Optional progress callback (NULL = silent).
  * @param progress_ctx    User data forwarded to @p progress_cb.
  * @param force_refresh   Non-zero to force re-download even if cached.

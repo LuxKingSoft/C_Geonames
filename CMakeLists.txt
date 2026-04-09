@@ -27,8 +27,8 @@ project(cgeonames VERSION 1.0.0 LANGUAGES C)
 # ============================================================================
 # Options
 # ============================================================================
-option(GEONAMES_BUILD_EXAMPLES "Build example programs" OFF)
-option(GEONAMES_BUILD_TESTS    "Build test programs"    OFF)
+option(CGEONAMES_BUILD_EXAMPLES "Build example programs" ON)
+option(CGEONAMES_BUILD_TESTS    "Build test programs"    ON)
 
 # ============================================================================
 # Dependencies
@@ -46,12 +46,12 @@ endif()
 # ============================================================================
 # Source / header lists
 # ============================================================================
-set(GEONAMES_SOURCES
-    source/geonames.c
+set(CGEONAMES_SOURCES
+    source/cgeonames.c
 )
 
-set(GEONAMES_HEADERS
-    include/geonames.h
+set(CGEONAMES_HEADERS
+    include/cgeonames.h
 )
 
 # ============================================================================
@@ -95,40 +95,40 @@ message(STATUS "")
 # ============================================================================
 # Static library
 # ============================================================================
-add_library(geonames_static STATIC ${GEONAMES_SOURCES})
+add_library(cgeonames_static STATIC ${CGEONAMES_SOURCES})
 
-target_include_directories(geonames_static
+target_include_directories(cgeonames_static
     PUBLIC  ${CMAKE_CURRENT_SOURCE_DIR}/include
     PRIVATE ${CURL_INCLUDE_DIRS}
 )
 
-target_link_libraries(geonames_static
+target_link_libraries(cgeonames_static
     PRIVATE ${CURL_LIBRARIES}
     PRIVATE ${MATH_LIB}
 )
 
-set_target_properties(geonames_static PROPERTIES
-    OUTPUT_NAME "geonames"
+set_target_properties(cgeonames_static PROPERTIES
+    OUTPUT_NAME "cgeonames"
     ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/libs"
 )
 
 # ============================================================================
 # Shared library
 # ============================================================================
-add_library(geonames_shared SHARED ${GEONAMES_SOURCES})
+add_library(cgeonames_shared SHARED ${CGEONAMES_SOURCES})
 
-target_include_directories(geonames_shared
+target_include_directories(cgeonames_shared
     PUBLIC  ${CMAKE_CURRENT_SOURCE_DIR}/include
     PRIVATE ${CURL_INCLUDE_DIRS}
 )
 
-target_link_libraries(geonames_shared
+target_link_libraries(cgeonames_shared
     PRIVATE ${CURL_LIBRARIES}
     PRIVATE ${MATH_LIB}
 )
 
-set_target_properties(geonames_shared PROPERTIES
-    OUTPUT_NAME "geonames"
+set_target_properties(cgeonames_shared PROPERTIES
+    OUTPUT_NAME "cgeonames"
     SOVERSION "1"
     VERSION "${PROJECT_VERSION}"
     LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/libs"
@@ -137,29 +137,88 @@ set_target_properties(geonames_shared PROPERTIES
 # ============================================================================
 # Named aliases — used by parent CMakeLists via target_link_libraries
 # ============================================================================
-add_library(geonames::static  ALIAS geonames_static)
-add_library(geonames::shared  ALIAS geonames_shared)
+add_library(cgeonames::static  ALIAS cgeonames_static)
+add_library(cgeonames::shared  ALIAS cgeonames_shared)
 
 # ============================================================================
 # Convenience "build everything" target
 # ============================================================================
-add_custom_target(build_geonames
-    DEPENDS geonames_static geonames_shared
-    COMMENT "Building geonames static and shared libraries..."
+add_custom_target(build_cgeonames
+    DEPENDS cgeonames_static cgeonames_shared
+    COMMENT "Building cgeonames static and shared libraries..."
 )
 
 # ============================================================================
-# Examples (built only when GEONAMES_BUILD_EXAMPLES=ON)
+# Examples (built only when CGEONAMES_BUILD_EXAMPLES=ON)
 # ============================================================================
-if(GEONAMES_BUILD_EXAMPLES)
-    message(STATUS "Building geonames examples...")
-    file(GLOB EXAMPLE_SOURCES examples/*.c)
-    foreach(src ${EXAMPLE_SOURCES})
-        get_filename_component(exe_name ${src} NAME_WE)
-        add_executable(geonames_example_${exe_name} ${src})
-        target_link_libraries(geonames_example_${exe_name}
-            PRIVATE geonames_static
-            PRIVATE ${CURL_LIBRARIES}
-        )
-    endforeach()
+if(CGEONAMES_BUILD_EXAMPLES)
+    message(STATUS "Building cgeonames examples...")
+
+    # Example 1: Basic city search with fuzzy matching
+    add_executable(cgeonames_example_basic_search examples/basic_search.c)
+    target_link_libraries(cgeonames_example_basic_search
+        PRIVATE cgeonames_static
+    )
+
+    # Example 2: Reverse geocoding — lat/lon to nearest city
+    add_executable(cgeonames_example_reverse_geocoding examples/reverse_geocoding.c)
+    target_link_libraries(cgeonames_example_reverse_geocoding
+        PRIVATE cgeonames_static
+    )
+
+    # Example 3: Advanced features — field filtering, progress callbacks, errors
+    add_executable(cgeonames_example_advanced_features examples/advanced_features.c)
+    target_link_libraries(cgeonames_example_advanced_features
+        PRIVATE cgeonames_static
+    )
+
+    message(STATUS "  Examples: basic_search, reverse_geocoding, advanced_features")
+endif()
+
+# ============================================================================
+# Tests ( built only when CGEONAMES_BUILD_TESTS=ON)
+# ============================================================================
+if(CGEONAMES_BUILD_TESTS)
+    enable_testing()
+    message(STATUS "Building cgeonames tests...")
+
+    # Unity Test Framework files
+    set(UNITY_SOURCES
+        tests/unity.c
+    )
+
+    set(UNITY_HEADERS
+        tests/unity.h
+        tests/unity_internals.h
+    )
+
+    # Test executable: Engine lifecycle and core functions
+    add_executable(cgeonames_test_engine
+        tests/test_engine.c
+        ${UNITY_SOURCES}
+    )
+
+    target_include_directories(cgeonames_test_engine
+        PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include
+        PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/tests
+    )
+
+    target_link_libraries(cgeonames_test_engine
+        PRIVATE cgeonames_static
+        PRIVATE ${MATH_LIB}
+    )
+
+    # Register test with CTest
+    add_test(
+        NAME cgeonames_test_engine
+        COMMAND cgeonames_test_engine
+    )
+
+    # Set test properties
+    set_tests_properties(cgeonames_test_engine PROPERTIES
+        TIMEOUT 30
+        LABELS "unit"
+    )
+
+    message(STATUS "  Tests: test_engine (Unity Test Framework)")
 endif()

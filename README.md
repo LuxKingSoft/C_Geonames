@@ -2,7 +2,7 @@
 
 ```
         ╔═════════════════════════════════════╗
-        ║   CGEONAMES - GEOLOCATION ENGINE           ║
+        ║   CGEONAMES - GEOLOCATION ENGINE    ║
         ╚═════════════════════════════════════╝
 
                       .  *  .   *   .  *  .
@@ -16,17 +16,17 @@
       *       |________|_________|___|       *
      .    🌊   🏘️  🏙️  🏔️  🏘️  🌊      .
     .       ~~~ ~~~ ~~~ ~~~ ~~~ ~~~      .
-   ═══════════════════════════════════════════
+   ═════════════════════════════════════════════════
    40.7128°N, 74.0060°W → New York, America/New_York
-   ═══════════════════════════════════════════
+   ═════════════════════════════════════════════════
 ```
 
-> **See** (C) **GeoNames** — an offline C implementation of the
-> [GeoNames](http://www.geonames.org/) geolocation API.
-> Auto-downloads, caches, and fuzzy-searches **11 million+ cities** worldwide —
-> no internet needed after first load.
->
-> *Data sourced from [GeoNames.org](http://www.geonames.org/) — CC-BY 4.0.*
+**See** (C) **GeoNames** — an offline C implementation of the
+[GeoNames](http://www.geonames.org/) geolocation API.
+Auto-downloads, caches, and fuzzy-searches **11 million+ cities** worldwide —
+no internet needed after first load.
+
+*Data sourced from [GeoNames.org](http://www.geonames.org/) — CC-BY 4.0.*
 
 ---
 
@@ -465,16 +465,16 @@ Permission is hereby granted, free of charge, to any person obtaining a copy of 
   2. THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #### CC-BY 4.0 License for GeoNames Data
+> **GeoNames** data is licensed under [**CC-BY 4.0**](https://creativecommons.org/licenses/by/4.0/).
 **Creative Commons Attribution 4.0 International License (CC BY 4.0)**
 
   You are free to:
-    - Share: copy and redistribute the material in any medium or format
-    - Adapt: remix, transform, and build upon the material
+    * Share: copy and redistribute the material in any medium or format
+    * Adapt: remix, transform, and build upon the material
   Under the following terms:
-    - Attribution: You must give appropriate credit, provide a link to the license, and indicate if changes were made. You may do so in any reasonable manner, but not in any way that suggests the licensor endorses you or your use.
-    - No additional restrictions: You may not apply legal terms or technological measures that legally restrict others from doing anything the license permits. 
+    * Attribution: You must give appropriate credit, provide a link to the license, and indicate if changes were made. You may do so in any reasonable manner, but not in any way that suggests the licensor endorses you or your use.
+    * No additional restrictions: You may not apply legal terms or technological measures that legally restrict others from doing anything the license permits. 
 
-> **GeoNames** data is licensed under [**CC-BY 4.0**](https://creativecommons.org/licenses/by/4.0/).
 >
 > Attribution required: please include a link to
 > [http://www.geonames.org/](http://www.geonames.org/) in your app's
@@ -492,7 +492,7 @@ Permission is hereby granted, free of charge, to any person obtaining a copy of 
 │  gn_search_nearby(eng, lat, lon) ←──┤                │
 │  gn_result_at(eng, i)       ←───────┘                │
 └──────────────────────┬───────────────────────────────┘
-                           │
+                       │
 ┌──────────────────────▼───────────────────────────────┐
 │                  geonames library                    │
 │                                                      │
