@@ -905,10 +905,21 @@ static int engine_parse_file(gn_engine_t* eng, const char* tsv_path) {
     char line[2048];
     int parse_errors = 0;
     int total_lines  = 0;
+    int skipped_long = 0;
 
     while (fgets(line, sizeof(line), fp)) {
         /* Skip blank lines */
         if (line[0] == '\n' || line[0] == '\r' || line[0] == '\0') continue;
+
+        /* Check if line doesn't end with \n — means it was truncated */
+        size_t len = strlen(line);
+        if (len > 0 && line[len-1] != '\n') {
+            skipped_long++;
+            /* Skip rest of this long line */
+            int ch;
+            while ((ch = fgetc(fp)) != '\n' && ch != EOF);
+            continue;
+        }
 
         /* Grow the cities array if necessary */
         if (eng->count >= eng->capacity) {
@@ -934,6 +945,7 @@ static int engine_parse_file(gn_engine_t* eng, const char* tsv_path) {
     if (eng->count == 0 && total_lines > 0) return -4;
 
     (void)parse_errors;  /* A few bad lines among millions are acceptable. */
+    (void)skipped_long;
     return 0;
 }
 
@@ -1416,20 +1428,33 @@ int gn_search(const gn_engine_t* engine, const char* query,
         if (eng->result_count > 0) { free(scores); return eng->result_count; }
     }
 
-    /* ---- Pass 2: all matches with any positive score ---- */
-    for (int i = 0;
-         i < engine->count && eng->result_count < limit; i++) {
+    /* ---- Pass 2: scan ALL records, keep top N by score ---- */
+    float min_score = 0.0f;
+
+    for (int i = 0; i < engine->count; i++) {
         const GeoName* c = &engine->cities[i];
         if (min_pop > 0 && c->population < min_pop) continue;
         if (cc_f && strcasecmp(c->country_code, cc_f) != 0) continue;
         if (a1_f && strcasecmp(c->admin1_code, a1_f) != 0) continue;
 
         float sc = score_record(c, query_lower);
-        if (sc > 0.0f) {
+        if (sc <= min_score) continue;
+
+        if (eng->result_count < limit) {
             eng->cities[i].relevance = sc;
             insert_sorted(eng->result_indices, scores,
                           eng->result_count, i, sc);
             eng->result_count++;
+            if (eng->result_count >= limit) {
+                min_score = scores[limit - 1];
+            }
+        } else {
+            eng->result_count--;
+            eng->cities[i].relevance = sc;
+            insert_sorted(eng->result_indices, scores,
+                          eng->result_count, i, sc);
+            eng->result_count++;
+            min_score = scores[limit - 1];
         }
     }
 
@@ -1750,22 +1775,42 @@ static int search_core(const gn_engine_t* engine, const char* query,
         if (eng->result_count > 0) { free(scores); return eng->result_count; }
     }
 
-    /* ---- Pass 2: all matches with any positive score ---- */
-    for (int i = 0;
-         i < engine->count && eng->result_count < limit; i++) {
+    /* ---- Pass 2: scan ALL records, keep top N by score ---- */
+    /* Use a min-heap approach: keep the best 'limit' results. */
+    float  min_score = 0.0f;
+
+    for (int i = 0; i < engine->count; i++) {
         const GeoName* c = &engine->cities[i];
         if (min_pop > 0 && c->population < min_pop) continue;
         if (cc_f && strcasecmp(c->country_code, cc_f) != 0) continue;
         if (a1_f && strcasecmp(c->admin1_code, a1_f) != 0) continue;
 
         float sc = score_record_ex(c, query_lower);
-        if (sc > 0.0f) {
+        if (sc <= min_score) continue;
+
+        if (eng->result_count < limit) {
+            /* Still filling — just insert. */
             if (fields & GN_FIELD_RELEVANCE) {
                 eng->cities[i].relevance = sc;
             }
             insert_sorted(eng->result_indices, scores,
                           eng->result_count, i, sc);
             eng->result_count++;
+            /* Update minimum score threshold. */
+            if (eng->result_count >= limit) {
+                min_score = scores[limit - 1];
+            }
+        } else {
+            /* Array is full — replace the worst if new score is better. */
+            /* Remove the last (lowest) entry and insert new one. */
+            eng->result_count--;
+            if (fields & GN_FIELD_RELEVANCE) {
+                eng->cities[i].relevance = sc;
+            }
+            insert_sorted(eng->result_indices, scores,
+                          eng->result_count, i, sc);
+            eng->result_count++;
+            min_score = scores[limit - 1];
         }
     }
 

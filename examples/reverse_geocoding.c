@@ -18,14 +18,23 @@
  */
 
 #include <stdio.h>
+#include <math.h>
 #include "cgeonames.h"
 
 /**
  * @brief Print a formatted GeoName result for reverse geocoding.
  */
-static void print_nearest(const GeoName* g, int rank) {
+static void print_nearest(const GeoName* g, int rank, double center_lat, double center_lon) {
+    /* Calculate actual distance from search center using haversine. */
+    double dlat = (g->latitude - center_lat) * M_PI / 180.0;
+    double dlon = (g->longitude - center_lon) * M_PI / 180.0;
+    double a = sin(dlat / 2.0) * sin(dlat / 2.0) +
+               cos(center_lat * M_PI / 180.0) * cos(g->latitude * M_PI / 180.0) *
+               sin(dlon / 2.0) * sin(dlon / 2.0);
+    double dist = 2.0 * 6371.0 * atan2(sqrt(a), sqrt(1.0 - a));
+
     printf("  %d. %-20s (%s)  dist=%.1f km\n",
-           rank, g->name, g->country_code, g->relevance);
+           rank, g->name, g->country_code, dist);
     printf("      Coords: %.4f, %.4f  |  TZ: %s\n",
            g->latitude, g->longitude, g->timezone);
     printf("      Admin: %s / %s / %s / %s\n",
@@ -76,7 +85,7 @@ int main(void) {
     printf("Found %d city(ies) within %.0f km:\n\n", n, opts.radius_km);
 
     for (int i = 0; i < n; i++) {
-        print_nearest(gn_result_at(eng, i), i + 1);
+        print_nearest(gn_result_at(eng, i), i + 1, 35.6895, 139.6917);
     }
 
     /* ---------------------------------------------------------------
@@ -110,8 +119,15 @@ int main(void) {
 
     for (int i = 0; i < n; i++) {
         const GeoName* g = gn_result_at(eng, i);
+        /* Calculate actual distance from search center. */
+        double dlat = (g->latitude - (-3.1190)) * M_PI / 180.0;
+        double dlon = (g->longitude - (-60.0217)) * M_PI / 180.0;
+        double a = sin(dlat / 2.0) * sin(dlat / 2.0) +
+                   cos((-3.1190) * M_PI / 180.0) * cos(g->latitude * M_PI / 180.0) *
+                   sin(dlon / 2.0) * sin(dlon / 2.0);
+        double dist = 2.0 * 6371.0 * atan2(sqrt(a), sqrt(1.0 - a));
         printf("  %d. %-20s  dist=%5.1f km  pop=%-8d  tz=%s\n",
-               i + 1, g->name, g->relevance, g->population, g->timezone);
+               i + 1, g->name, dist, g->population, g->timezone);
     }
     printf("\n");
 
