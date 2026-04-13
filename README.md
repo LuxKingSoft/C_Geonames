@@ -1,9 +1,9 @@
-# 🌍 cgeonames — GeoNames API Implementation in C
+# 🌍 C Geonames — GeoNames API Implementation in C
 
 ```
-        ╔═════════════════════════════════════╗
-        ║   CGEONAMES - GEOLOCATION ENGINE    ║
-        ╚═════════════════════════════════════╝
+        ╔══════════════════════════════════════╗
+        ║   C GEONAMES - GEOLOCATION ENGINE    ║
+        ╚══════════════════════════════════════╝
 
                       .  *  .   *   .  *  .
                    *      🛰️       .      *
@@ -21,7 +21,7 @@
    ═════════════════════════════════════════════════
 ```
 
-**See** (C) **GeoNames** — an offline C implementation of the
+**See** **C GeoNames** — an offline C implementation of the
 [GeoNames](http://www.geonames.org/) geolocation API.
 Auto-downloads, caches, and fuzzy-searches **11 million+ cities** worldwide —
 no internet needed after first load.
@@ -34,7 +34,7 @@ no internet needed after first load.
 
 | Feature | Description |
 |---|---|
-| 📥 **Auto-download** | Downloads GeoNames TSV files via libcurl, extracts with system `unzip`, caches to `~/.geonames/` |
+| 📥 **Auto-download** | Downloads GeoNames TSV files via libcurl, extracts with system `unzip`, caches to `~/.cgeonames/` |
 | 🔍 **Fuzzy search** | Multi-tier scoring: exact match → prefix → substring → Levenshtein (≤ 2 edits) |
 | 📍 **Reverse geocoding** | Lat/lon → nearest city using Haversine great-circle distance |
 | 🌐 **Timezone lookup** | Every record includes IANA timezone (`Europe/Madrid`) |
@@ -62,7 +62,7 @@ no internet needed after first load.
 
 ```c
 #include <stdio.h>
-#include "geonames.h"
+#include "cgeonames.h"
 
 int main(void) {
     /* 1. Create the engine */
@@ -101,7 +101,7 @@ int main(void) {
 **Compile & run:**
 
 ```bash
-gcc -o example example.c -I include -L build/libs -lgeonames -lcurl -lm
+gcc -o example example.c -I include -L build/libs -lcgeonames -lcurl -lm
 ./example
 ```
 
@@ -273,30 +273,30 @@ GN_FIELD_RELEVANCE      (1 << 12)  Fuzzy-match score or distance in km
 
 ```bash
 mkdir build && cd build
-cmake .. -DGEONAMES_BUILD_EXAMPLES=ON
+cmake .. -DCGEONAMES_BUILD_EXAMPLES=ON
 make -j$(nproc)
 ```
 
 This produces:
-- `libs/libgeonames.a` — static library
-- `libs/libgeonames.so` — shared library (`.dll` on Windows)
+- `libs/libcgeonames.a` — static library
+- `libs/libcgeonames.so` — shared library (`.dll` on Windows)
 
 ### CMake integration
 
 ```cmake
 # Add as a subdirectory
-add_subdirectory(external/geonames)
+add_subdirectory(external/cgeonames)
 
 # Link either static or shared
-target_link_libraries(my_app PRIVATE geonames::static)
+target_link_libraries(my_app PRIVATE cgeonames::static)
 # or
-target_link_libraries(my_app PRIVATE geonames::shared)
+target_link_libraries(my_app PRIVATE cgeonames::shared)
 ```
 
 ### Linking manually
 
 ```bash
-gcc -o myapp myapp.c -I geonames/include -L geonames/build/libs -lgeonames -lcurl -lm
+gcc -o myapp myapp.c -I cgeonames/include -L cgeonames/build/libs -lcgeonames -lcurl -lm
 ```
 
 ---
@@ -494,7 +494,7 @@ Permission is hereby granted, free of charge, to any person obtaining a copy of 
 └──────────────────────┬───────────────────────────────┘
                        │
 ┌──────────────────────▼───────────────────────────────┐
-│                  geonames library                    │
+│                  cgeonames library                   │
 │                                                      │
 │  ┌─────────────┐  ┌──────────────┐  ┌────────────┐   │
 │  │   Engine    │  │    Parser    │  │   Search   │   │
@@ -523,7 +523,7 @@ Permission is hereby granted, free of charge, to any person obtaining a copy of 
               └─────────┬──────────┘
                         │
               ┌─────────▼──────────┐
-              │   Disk cache       │  ~/.geonames/
+              │   Disk cache       │  ~/.cgeonames/
               │  (ZIP + TXT)       │  Persistent
               └────────────────────┘
 ```
@@ -535,14 +535,14 @@ Permission is hereby granted, free of charge, to any person obtaining a copy of 
 **v1.0.0** — Initial release
 
 ```c
-printf("cgeonames %s\n", gn_version());
-/* Output: cgeonames 1.0.0 */
+printf("C Geonames %s\n", gn_version());
+/* Output: C Geonames 1.0.0 */
 ```
 
 ---
 
 <p align="center">
-  <strong>cgeonames</strong> — See GeoNames in C
+  <strong>C Geonames</strong> — See GeoNames in C
   <br>
   <sub>An independent C implementation of the <a href="http://www.geonames.org/">GeoNames</a> geolocation API.<br>
   Data: GeoNames — <a href="https://creativecommons.org/licenses/by/4.0/">CC-BY 4.0</a> — <a href="http://www.geonames.org/">geonames.org</a></sub>

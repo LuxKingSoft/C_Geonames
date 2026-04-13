@@ -37,7 +37,7 @@ int main(void) {
      * 2. Download & load Japan's city data
      *    - GN_SRC_COUNTRY means "per-country file"
      *    - "JP" is the ISO 3166-1 alpha-2 code for Japan
-     *    - NULL local_dir uses the default ~/.geonames/ cache
+     *    - NULL local_dir uses the default ~/.cgeonames/ cache
      * --------------------------------------------------------------- */
     printf("Downloading Japan city data (cities >= 1000 pop)...\n");
     int ret = gn_engine_download_and_load(
@@ -107,6 +107,6 @@ int main(void) {
      * --------------------------------------------------------------- */
     gn_engine_free(eng);
 
-    printf("\nDone. Data cached in ~/.geonames/ — next load is instant.\n");
+    printf("\nDone. Data cached in ~/.cgeonames/ — next load is instant.\n");
     return 0;
 }

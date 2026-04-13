@@ -148,6 +148,6 @@ int main(void) {
      * --------------------------------------------------------------- */
     gn_engine_free(eng);
 
-    printf("Done. Files cached in ~/.geonames/ for instant reload.\n");
+    printf("Done. Files cached in ~/.cgeonames/ for instant reload.\n");
     return 0;
 }

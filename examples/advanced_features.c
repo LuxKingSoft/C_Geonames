@@ -278,6 +278,6 @@ int main(void) {
      * --------------------------------------------------------------- */
     gn_engine_free(eng);
 
-    printf("Done. All cached files remain in ~/.geonames/ for reuse.\n");
+    printf("Done. All cached files remain in ~/.cgeonames/ for reuse.\n");
     return 0;
 }
